@@ -4,12 +4,17 @@ import { observer } from 'mobx-react';
 import classnames from 'classnames';
 import { Button } from 'react-polymorph/lib/components/Button';
 import { ButtonSkin } from 'react-polymorph/lib/skins/simple/ButtonSkin';
+import { InfiniteScroll } from 'react-polymorph/lib/components/InfiniteScroll';
+import { InfiniteScrollSkin } from 'react-polymorph/lib/skins/simple/InfiniteScrollSkin';
+import { LoadingSpinner } from 'react-polymorph/lib/components/LoadingSpinner';
+import { LoadingSpinnerSkin } from 'react-polymorph/lib/skins/simple/LoadingSpinnerSkin';
+import { FlexItem } from 'react-polymorph/lib/components/layout/FlexItem';
 import { defineMessages, intlShape } from 'react-intl';
 import moment from 'moment';
 import styles from './WalletTransactionsList.scss';
 import Transaction from './Transaction';
 import WalletTransaction from '../../../domains/WalletTransaction';
-import LoadingSpinner from '../../widgets/LoadingSpinner';
+// import LoadingSpinner from '../../widgets/LoadingSpinner';
 import type { AssuranceMode } from '../../../types/transactionAssuranceTypes';
 
 const messages = defineMessages({
@@ -48,6 +53,7 @@ type Props = {
   showMoreTransactionsButton?: boolean,
   onShowMoreTransactions?: Function,
   onOpenExternalLink?: Function,
+  onLoadMore?: Function
 };
 
 @observer
@@ -55,6 +61,10 @@ export default class WalletTransactionsList extends Component<Props> {
 
   static contextTypes = {
     intl: intlShape.isRequired,
+  };
+
+  static defaultProps = {
+    onLoadMore() {}
   };
 
   componentWillMount() {
@@ -139,41 +149,80 @@ export default class WalletTransactionsList extends Component<Props> {
     ]);
 
     return (
-      <div className={styles.component}>
-        {syncingTransactionsSpinner}
-
-        {transactionsGroups.map((group, groupIndex) => (
-          <div className={styles.group} key={walletId + '-' + groupIndex}>
-            <div className={styles.groupDate}>{this.localizedDate(group.date)}</div>
-            <div className={styles.list}>
-              {group.transactions.map((transaction, transactionIndex) => (
-                <div key={`${walletId}-${transaction.id}-${transaction.type}`}>
-                  <Transaction
-                    data={transaction}
-                    isLastInList={transactionIndex === group.transactions.length - 1}
-                    state={transaction.state}
-                    assuranceLevel={transaction.getAssuranceLevelForMode(assuranceMode)}
-                    formattedWalletAmount={formattedWalletAmount}
-                    onOpenExternalLink={onOpenExternalLink}
-                  />
+      <InfiniteScroll
+        className={styles.root}
+        skin={InfiniteScrollSkin}
+        fetchData={() => {
+          this.props.onLoadMore();
+        }}
+        renderItems={() => (
+          <div className={styles.itemsRoot}>
+            {transactionsGroups.map((group, groupIndex) => (
+              <div className={styles.group} key={walletId + '-' + groupIndex}>
+                <div className={styles.groupDate}>{this.localizedDate(group.date)}</div>
+                <div className={styles.list}>
+                  {group.transactions.map((transaction, transactionIndex) => (
+                    <div key={`${walletId}-${transaction.id}-${transaction.type}`}>
+                      <Transaction
+                        data={transaction}
+                        isLastInList={transactionIndex === group.transactions.length - 1}
+                        state={transaction.state}
+                        assuranceLevel={transaction.getAssuranceLevelForMode(assuranceMode)}
+                        formattedWalletAmount={formattedWalletAmount}
+                        onOpenExternalLink={onOpenExternalLink}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+            {/* {!hasMoreToLoad && <div>End of Transactions</div>} */}
+            {isLoadingTransactions && (
+              <FlexItem>
+                <LoadingSpinner big skin={LoadingSpinnerSkin} />
+              </FlexItem>
+            )}
           </div>
-        ))}
-
-        {loadingSpinner}
-
-        {showMoreTransactionsButton &&
-          <Button
-            className={buttonClasses}
-            label={intl.formatMessage(messages.showMoreTransactionsButtonLabel)}
-            onClick={this.onShowMoreTransactions.bind(this, walletId)}
-            skin={ButtonSkin}
-          />
-        }
-      </div>
+        )}
+      />
     );
+
+    // return (
+    //   <div className={styles.component}>
+    //     {syncingTransactionsSpinner}
+    //
+    //     {transactionsGroups.map((group, groupIndex) => (
+    //       <div className={styles.group} key={walletId + '-' + groupIndex}>
+    //         <div className={styles.groupDate}>{this.localizedDate(group.date)}</div>
+    //         <div className={styles.list}>
+    //           {group.transactions.map((transaction, transactionIndex) => (
+    //             <div key={`${walletId}-${transaction.id}-${transaction.type}`}>
+    //               <Transaction
+    //                 data={transaction}
+    //                 isLastInList={transactionIndex === group.transactions.length - 1}
+    //                 state={transaction.state}
+    //                 assuranceLevel={transaction.getAssuranceLevelForMode(assuranceMode)}
+    //                 formattedWalletAmount={formattedWalletAmount}
+    //                 onOpenExternalLink={onOpenExternalLink}
+    //               />
+    //             </div>
+    //           ))}
+    //         </div>
+    //       </div>
+    //     ))}
+    //
+    //     {loadingSpinner}
+    //
+    //     {showMoreTransactionsButton &&
+    //       <Button
+    //         className={buttonClasses}
+    //         label={intl.formatMessage(messages.showMoreTransactionsButtonLabel)}
+    //         onClick={this.onShowMoreTransactions.bind(this, walletId)}
+    //         skin={ButtonSkin}
+    //       />
+    //     }
+    //   </div>
+    // );
   }
 
   onShowMoreTransactions = (walletId: string) => {

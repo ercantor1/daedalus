@@ -15,8 +15,8 @@ export type TransactionSearchOptionsStruct = {
 
 export default class TransactionsStore extends Store {
 
-  INITIAL_SEARCH_LIMIT = 1000;
-  SEARCH_LIMIT_INCREASE = 500;
+  INITIAL_SEARCH_LIMIT = 10;
+  SEARCH_LIMIT_INCREASE = 10;
   SEARCH_SKIP = 0;
   RECENT_TRANSACTIONS_LIMIT = 5;
 

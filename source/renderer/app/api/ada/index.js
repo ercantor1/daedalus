@@ -284,7 +284,6 @@ export default class AdaApi {
   async getTransactions(request: GetTransactionsRequest): Promise<GetTransactionsResponse> {
     Logger.debug('AdaApi::searchHistory called: ' + stringifyData(request));
     const { walletId, skip, limit } = request;
-
     const accounts = await getAdaWalletAccountsV1({ ca, walletId });
     const accountIndex = accounts[0].index;
     const page = skip === 0 ? 1 : (skip / limit) + 1;
