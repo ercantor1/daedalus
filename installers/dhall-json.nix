@@ -1,23 +1,27 @@
 { mkDerivation, aeson, aeson-pretty, base, bytestring, dhall
-, fetchgit, optparse-generic, stdenv, text, trifecta
-, unordered-containers, yaml
+, fetchgit, insert-ordered-containers, optparse-applicative, stdenv
+, tasty, tasty-hunit, text, unordered-containers, yaml
 }:
 mkDerivation {
   pname = "dhall-json";
-  version = "1.0.12";
+  version = "1.2.3";
   src = fetchgit {
     url = "https://github.com/dhall-lang/dhall-json";
-    sha256 = "0pvbpbg6475drvpakny12y3z2dv0vj6x4hlk853dgb84xbsd8i33";
-    rev = "d6adaa265dcf8ab5899396b05d612b2d8092dca4";
+    sha256 = "0yz6hlk94k2jn794397r73q8xb9yqp4zbzl30mx336ph7xdfg3sh";
+    rev = "51a1fdae69724bbce158dcd44156da0de16f708f";
   };
+  doCheck = false;
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    aeson base bytestring dhall text trifecta unordered-containers
+    aeson base dhall insert-ordered-containers optparse-applicative
+    text unordered-containers
   ];
   executableHaskellDepends = [
-    aeson aeson-pretty base bytestring dhall optparse-generic text yaml
+    aeson aeson-pretty base bytestring dhall optparse-applicative text
+    yaml
   ];
+  testHaskellDepends = [ aeson base dhall tasty tasty-hunit text ];
   description = "Compile Dhall to JSON or YAML";
   license = stdenv.lib.licenses.bsd3;
 }
