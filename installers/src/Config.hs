@@ -179,7 +179,7 @@ forConfigValues :: FilePath -> OS -> Cluster -> (Config -> YAML.Value -> IO a) -
 forConfigValues dhallRoot os cluster action = do
   sequence_ [ let topExpr = dhallTopExpr dhallRoot cfg os cluster
               in action cfg =<<
-                 (handle $ Dhall.codeToValue (BS8.pack $ T.unpack topExpr) topExpr)
+                 Dhall.detailed (Dhall.codeToValue (BS8.pack $ T.unpack topExpr) topExpr)
             | cfg     <- enumFromTo minBound maxBound ]
 
 checkAllConfigs :: FilePath -> IO ()
