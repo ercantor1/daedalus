@@ -22,6 +22,7 @@ let
 
   addTestStubs = pkg: overrideCabal pkg (drv: {
     testToolDepends = [
+      cabal-install
       coreutils
       (writeShellScriptBin "daedalus-bridge" "echo ${daedalus-bridge}")
       (buildEnv {
