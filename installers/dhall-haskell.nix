@@ -1,38 +1,43 @@
-{ mkDerivation, ansi-terminal, ansi-wl-pprint, base
-, base16-bytestring, bytestring, case-insensitive, containers
-, contravariant, cryptonite, deepseq, directory, exceptions
-, fetchgit, filepath, formatting, haskeline, http-client
-, http-client-tls, insert-ordered-containers, lens-family-core
-, memory, mtl, optparse-generic, parsers, prettyprinter
-, prettyprinter-ansi-terminal, repline, scientific, stdenv, tasty
-, tasty-hunit, text, transformers, trifecta, unordered-containers
-, vector
+{ mkDerivation, ansi-terminal, base, bytestring, case-insensitive
+, cborg, containers, contravariant, criterion, cryptonite, deepseq
+, Diff, directory, doctest, exceptions, fetchgit, filepath
+, hashable, haskeline, http-client, http-client-tls
+, insert-ordered-containers, lens-family-core, megaparsec, memory
+, mockery, mtl, optparse-applicative, parsers, prettyprinter
+, prettyprinter-ansi-terminal, QuickCheck, quickcheck-instances
+, repline, scientific, serialise, stdenv, tasty, tasty-hunit
+, tasty-quickcheck, template-haskell, text, transformers
+, unordered-containers, vector
 }:
 mkDerivation {
   pname = "dhall";
-  version = "1.11.1";
+  version = "1.17.0";
   src = fetchgit {
-    url = "https://github.com/dhall-lang/dhall-haskell.git";
-    rev    = "4a085aa3d622886cf7dd96a1ad475ba914d5ab1f";
-    sha256 = "0849rvv9m5rgxgvn60q2bwfr7m1syjkgxrrs4xafs10ymfdx0g9f";
+    url = "https://github.com/dhall-lang/dhall-haskell";
+    sha256 = "1idh2vz61hk7rm7ci0k5jwpg7q9x8xs1lvm14gfnbc338rz1ci6g";
+    rev = "befd0ed8a7cee4c4174c69f8da2f1713bb35fb1d";
   };
+  doCheck = false;
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    ansi-wl-pprint base base16-bytestring bytestring case-insensitive
-    containers contravariant cryptonite directory exceptions filepath
-    formatting http-client http-client-tls insert-ordered-containers
-    lens-family-core memory parsers prettyprinter
-    prettyprinter-ansi-terminal scientific text transformers trifecta
-    unordered-containers vector
+    ansi-terminal base bytestring case-insensitive cborg containers
+    contravariant cryptonite Diff directory exceptions filepath
+    hashable haskeline http-client http-client-tls
+    insert-ordered-containers lens-family-core megaparsec memory mtl
+    optparse-applicative parsers prettyprinter
+    prettyprinter-ansi-terminal repline scientific serialise
+    template-haskell text transformers unordered-containers vector
   ];
-  executableHaskellDepends = [
-    ansi-terminal base haskeline mtl optparse-generic prettyprinter
-    prettyprinter-ansi-terminal repline text trifecta
-  ];
+  executableHaskellDepends = [ base ];
   testHaskellDepends = [
-    base deepseq insert-ordered-containers prettyprinter tasty
-    tasty-hunit text vector
+    base containers deepseq directory doctest filepath hashable
+    insert-ordered-containers mockery prettyprinter QuickCheck
+    quickcheck-instances serialise tasty tasty-hunit tasty-quickcheck
+    text transformers vector
+  ];
+  benchmarkHaskellDepends = [
+    base bytestring containers criterion directory serialise text
   ];
   description = "A configuration language guaranteed to terminate";
   license = stdenv.lib.licenses.bsd3;
