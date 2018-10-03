@@ -1,9 +1,8 @@
 { mkDerivation, aeson, base, bytestring, containers, dhall
-, dhall-json, directory, filepath, foldl, github, Glob, hspec
-, lens-aeson, managed, megaparsec, microlens, network-uri, nsis
-, optional-args, optparse-applicative, optparse-generic, split
-, stdenv, system-filepath, temporary, text, turtle, universum, wreq
-, yaml, zip-archive
+, dhall-json, directory, filepath, github, Glob, lens-aeson
+, megaparsec, microlens, network-uri, nsis, optional-args
+, optparse-applicative, split, stdenv, system-filepath, temporary
+, text, turtle, universum, wreq, yaml, zip-archive
 }:
 mkDerivation {
   pname = "daedalus-installer";
@@ -18,15 +17,8 @@ mkDerivation {
   ];
   executableHaskellDepends = [
     aeson base bytestring containers dhall dhall-json directory
-    filepath foldl megaparsec optional-args optparse-applicative
-    optparse-generic split system-filepath temporary text turtle
-    universum yaml
-  ];
-  testHaskellDepends = [
-    aeson base bytestring containers dhall dhall-json directory
-    filepath foldl hspec lens-aeson managed megaparsec optional-args
-    optparse-applicative optparse-generic split system-filepath
-    temporary text turtle universum yaml
+    filepath megaparsec optional-args optparse-applicative split
+    system-filepath temporary text turtle universum yaml
   ];
   description = "Daedalus Installer Builder";
   license = stdenv.lib.licenses.mit;
