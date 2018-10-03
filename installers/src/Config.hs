@@ -170,7 +170,7 @@ dhallTopExpr dhallRoot cfg os cluster
   where comp x = dhallRoot </> fromText (lshowText x) <.> "dhall"
 
 getInstallerConfig :: FilePath -> OS -> Cluster -> IO InstallerConfig
-getInstallerConfig dhallRoot os cluster = Dhall.input Dhall.auto (LT.fromStrict topexpr)
+getInstallerConfig dhallRoot os cluster = Dhall.input Dhall.auto topexpr
     where
         topexpr = format (dfp%" "%dfp%" ("%dfp%" "%dfp%")") (dhallRoot </> "installer.dhall") (comp cluster) (comp os) (comp cluster)
         comp x = dhallRoot </> fromText (lshowText x) <.> "dhall"
@@ -179,7 +179,7 @@ forConfigValues :: FilePath -> OS -> Cluster -> (Config -> YAML.Value -> IO a) -
 forConfigValues dhallRoot os cluster action = do
   sequence_ [ let topExpr = dhallTopExpr dhallRoot cfg os cluster
               in action cfg =<<
-                 Dhall.detailed (Dhall.codeToValue (BS8.pack $ T.unpack topExpr) topExpr)
+                 Dhall.detailed (Dhall.codeToValue Dhall.NoConversion topExpr topExpr)
             | cfg     <- enumFromTo minBound maxBound ]
 
 checkAllConfigs :: FilePath -> IO ()
